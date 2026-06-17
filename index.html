@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>풍산고등학교 6월 급식표</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&family=Noto+Sans+KR:wght@400;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Dongle', 'Noto Sans KR', sans-serif;
+    font-size: 17px;
+    min-height: 100vh;
+    color: #3a1a28;
+    background-color: #f9e0ec;
+    background-image:
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 18px,
+        rgba(192,24,88,0.13) 18px,
+        rgba(192,24,88,0.13) 20px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 18px,
+        rgba(192,24,88,0.13) 18px,
+        rgba(192,24,88,0.13) 20px
+      ),
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 38px,
+        rgba(160,0,80,0.08) 38px,
+        rgba(160,0,80,0.08) 42px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 38px,
+        rgba(160,0,80,0.08) 38px,
+        rgba(160,0,80,0.08) 42px
+      );
+  }
+
+  /* 상단 레이스 바 */
+  body::before {
+    content: '';
+    display: block;
+    height: 28px;
+    background-color: #f3b3ca;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='28'%3E%3Ccircle cx='20' cy='28' r='11' fill='%23fce8f0'/%3E%3Ccircle cx='0' cy='28' r='11' fill='%23fce8f0'/%3E%3Ccircle cx='40' cy='28' r='11' fill='%23fce8f0'/%3E%3Crect width='40' height='14' fill='%23f070a0'/%3E%3Ccircle cx='10' cy='7' r='2' fill='%23fff0f8' opacity='0.5'/%3E%3Ccircle cx='20' cy='7' r='2' fill='%23fff0f8' opacity='0.5'/%3E%3Ccircle cx='30' cy='7' r='2' fill='%23fff0f8' opacity='0.5'/%3E%3C/svg%3E");
+    background-size: 40px 28px;
+  }
+
+  /* 하단 레이스 바 */
+  body::after {
+    content: '';
+    display: block;
+    height: 28px;
+    background-color: #ffbfd7;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='28'%3E%3Ccircle cx='20' cy='0' r='11' fill='%23fce8f0'/%3E%3Ccircle cx='0' cy='0' r='11' fill='%23fce8f0'/%3E%3Ccircle cx='40' cy='0' r='11' fill='%23fce8f0'/%3E%3Crect y='14' width='40' height='14' fill='%23f070a0'/%3E%3C/svg%3E");
+    background-size: 40px 28px;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 10;
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: -600px 0; }
+    100% { background-position: 600px 0; }
+  }
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-5px); }
+  }
+
+  .app { max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  /* 헤더 */
+  header { margin-bottom: 20px; text-align: center; position: relative; padding: 0 50px; }
+  header::before, header::after {
+    content: '🪽';
+    font-size: 30px;
+    position: absolute;
+    top: 8px;
+    animation: floatY 2.5s ease-in-out infinite;
+  }
+  header::before { left: 0; animation-delay: 0s; }
+  header::after  { right: 0; animation-delay: 0.6s; }
+  header h1 {
+    font-size: 56px; font-weight: 700;
+    letter-spacing: 0.07em;
+    display: inline-block;
+    background: linear-gradient(90deg,
+      #c01858 0%, #e84080 18%, #ffcce0 35%,
+      #f040a0 50%, #ffcce0 65%, #e84080 82%, #c01858 100%
+    );
+    background-size: 600px 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 2.5s linear infinite, floatY 3s ease-in-out infinite;
+    filter:
+      drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff)
+      drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff)
+      drop-shadow(4px 4px 0 #f8a0c8);
+  }
+  header p { font-size: 19px; color: #ff3078ce; margin-top: 2px; letter-spacing: 0.04em; }
+
+  /* 달력 */
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .dow { text-align: center; font-size: 20px; font-weight: 700; padding: 6px 0 8px; color: #c06080; letter-spacing: 0.05em; }
+  .dow.sun { color: #d0204a; }
+  .dow.sat { color: #9040c0; }
+
+  .day {
+    background: #fff8fb;
+    border-radius: 10px;
+    padding: 5px;
+    min-height: 82px;
+    cursor: pointer;
+    border: 2px solid #f8c0d8;
+    transition: all 0.12s;
+    display: flex; flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  /* 선택된 날 체크 오버레이 */
+  .day::after {
+    content: '';
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 0.12s;
+    background-image:
+      repeating-linear-gradient(45deg, transparent, transparent 6px, rgba(192,24,88,0.08) 6px, rgba(192,24,88,0.08) 7px),
+      repeating-linear-gradient(-45deg, transparent, transparent 6px, rgba(192,24,88,0.08) 6px, rgba(192,24,88,0.08) 7px);
+    pointer-events: none;
+    border-radius: 8px;
+  }
+  .day.selected::after { opacity: 1; }
+  .day:hover { border-color: #f060a0; transform: scale(1.02); }
+  .day.empty { background: transparent; cursor: default; border: none; }
+  .day.today {
+    border-color: #d01858;
+    background: #fff0f6;
+    box-shadow: 0 0 0 3px #ffc0d8, inset 0 0 0 1px #f080a8;
+  }
+  .day.selected {
+    border-color: #c01858;
+    background: linear-gradient(160deg, #fff0f6 0%, #ffe4f0 100%);
+    box-shadow: 0 3px 12px rgba(192,24,88,0.2);
+  }
+  .day.sun .day-num { color: #d0204a; }
+  .day.sat .day-num { color: #9040c0; }
+  .day-num { font-size: 15px; font-weight: 700; color: #c03060; }
+
+  .day-stars-summary { font-size: 13px; margin-top: 3px; display: flex; flex-direction: column; gap: 1px; padding-top: 3px; border-top: 1.5px dashed #f8c0d8; }
+  .summary-line { display: flex; align-items: center; gap: 2px; color: #d090b0; font-weight: 500; flex-wrap: nowrap; overflow: hidden; }
+  .summary-line.has-stars { color: #d01858; font-weight: 700; }
+
+  /* 메인 레이아웃 */
+  .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+  @media (max-width: 768px) { .main-content { grid-template-columns: 1fr; } }
+
+  .detail, .comments-box {
+    background: #fff8fb;
+    border-radius: 16px;
+    padding: 18px;
+    border: 2px solid #f8c0d8;
+    display: flex; flex-direction: column;
+    position: relative;
+    box-shadow: 3px 3px 0 #f8c0d8;
+  }
+  /* 카드 코너 하트 장식 */
+  .detail::before, .comments-box::before {
+    content: '♥';
+    position: absolute; top: -10px; right: 10px;
+    font-size: 20px; color: #f060a0;
+    background: none;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .detail-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+  .detail-date { font-size: 21px; font-weight: 700; color: #c01858; }
+  .detail-kcal { font-size: 15px; color: #e06090; font-weight: 600; }
+
+  /* 탭 */
+  .meal-tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .tab {
+    padding: 6px 15px; border-radius: 20px; font-size: 20px; font-weight: 700;
+    cursor: pointer; border: 2px solid #f0c0d8;
+    background: #fff8fb; color: #c090a8;
+    transition: all 0.12s;
+    display: flex; align-items: center; gap: 4px;
+    letter-spacing: 0.03em;
+    font-family: 'Single Day', 'Dongle', cursive;
+  }
+  .tab:hover { border-color: #f060a0; color: #d04080; transform: scale(1.03); }
+  .tab.active-b { background: #ffe0f0; color: #c01858; border-color: #f060a0; box-shadow: 2px 2px 0 #f0b0d0; }
+  .tab.active-l { background: #ffd0e8; color: #a01040; border-color: #e04080; box-shadow: 2px 2px 0 #f0a0c8; }
+  .tab.active-d { background: #f0d0f8; color: #7020a0; border-color: #c060e0; box-shadow: 2px 2px 0 #e0a0f0; }
+  .tab-stars { font-size: 15px; font-weight: 700; color: #f04080; }
+
+  /* 메뉴 목록 */
+  .menu-list { display: flex; flex-direction: column; gap: 4px; }
+  .menu-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 13px;
+    background: #fff0f6;
+    border-radius: 10px; font-size: 20px;
+    cursor: pointer; user-select: none;
+    transition: all 0.12s;
+    border: 1.5px solid #fad0e4;
+  }
+  .menu-row:hover { background: #ffe4f0; border-color: #f090b8; transform: translateX(2px); }
+  .menu-row.favorite {
+    background: linear-gradient(90deg, #fff0f8, #ffe8f4);
+    border: 2px solid #f060a0;
+    box-shadow: 2px 2px 0 #fabad4;
+  }
+  .menu-left { display: flex; align-items: center; gap: 7px; }
+  .star-icon { color: #f0c0d4; font-size: 17px; transition: all 0.12s; }
+  .menu-row.favorite .star-icon { color: #f02060; transform: scale(1.2); }
+  .menu-name { color: #3a1a28; font-weight: 500; }
+  .allergy { font-size: 10px; color: #e0a0b8; font-weight: 400; margin-left: 6px; flex-shrink: 0; }
+  .no-meal { text-align: center; padding: 2rem; color: #f0b0c8; font-size: 13px; }
+
+  /* 댓글창 */
+  .comments-title { font-size: 20px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; color: #c01858; }
+  .comment-list { flex-grow: 1; min-height: 180px; max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; padding-right: 4px; }
+  .comment-item {
+    background: #fff0f6; padding: 9px 12px; border-radius: 10px;
+    font-size: 20px; line-height: 1.45;
+    border: 1.5px solid #fad0e4;
+  }
+  .comment-meta { display: flex; justify-content: space-between; font-size: 12px; color: #e090b0; margin-bottom: 3px; font-weight: 700; }
+  .comment-input-wrap { display: flex; gap: 6px; }
+  .comment-input {
+    flex-grow: 1; padding: 9px 13px;
+    border: 2px solid #f0b8d0; border-radius: 10px;
+    font-size: 25px; outline: none;
+    background: #fff8fb; color: #3a1a28;
+    font-family: inherit;
+  }
+  .comment-input:focus { border-color: #d01858; box-shadow: 2px 2px 0 #f0b0d0; }
+  .comment-input::placeholder { color: #f0b8cc; }
+  .comment-btn {
+    padding: 0 16px;
+    background: #e01858;
+    color: #fff; border: none; border-radius: 10px;
+    font-size: 23px; font-weight: 700; cursor: pointer;
+    border-bottom: 3px solid #a01040;
+    transition: all 0.1s;
+    font-family: inherit;
+  }
+  .comment-btn:hover { background: #c01040; transform: translateY(-1px); }
+  .comment-btn:active { transform: translateY(1px); border-bottom-width: 1px; }
+  .no-comments { text-align: center; color: #f0b8cc; font-size: 14px; margin: auto 0; }
+
+  .legend { display: flex; gap: 14px; margin-top: 16px; font-size: 13px; color: #d4a0b4; }
+
+  /* 타이머 */
+  .timer-box {
+    margin: 14px 0 0;
+    background: rgba(255,255,255,0.88);
+    border: 2px solid #f8c0d8;
+    border-radius: 16px;
+    padding: 14px 20px;
+    box-shadow: 3px 3px 0 #f8c0d8;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+    position: relative;
+  }
+  .timer-box::before {
+    content: '♥';
+    position: absolute; top: -1px; right: 10px;
+    font-size: 11px; color: #f060a0;
+    background: rgba(255,255,255,0.88);
+    padding: 0 3px; line-height: 1;
+  }
+  .timer-meal-info { display: flex; flex-direction: column; gap: 2px; }
+  .timer-label { font-size: 13px; color: #d090b0; font-weight: 600; }
+  .timer-meal-name { font-size: 16px; color: #c01858; font-weight: 700; }
+  .timer-menu-preview { font-size: 12px; color: #e090b0; margin-top: 2px; }
+  .timer-count { display: flex; align-items: flex-end; gap: 4px; }
+  .timer-done { font-size: 22px; color: #c01858; font-weight: 700; text-align: right; }
+  .timer-unit { display: flex; flex-direction: column; align-items: center; }
+  .timer-num {
+    font-size: 32px; font-weight: 700; color: #c01858;
+    min-width: 44px; text-align: center;
+    background: #fff0f6; border-radius: 8px;
+    border: 1.5px solid #f8c0d8;
+    padding: 2px 4px; line-height: 1.1;
+  }
+  .timer-unit-label { font-size: 11px; color: #d090b0; margin-top: 2px; font-weight: 600; }
+  .timer-sep { font-size: 28px; font-weight: 700; color: #f0b0cc; padding-bottom: 6px; }
+  .legend-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; }
+
+  .global-stars { font-size: 13px; color: #f04080; margin-left: 5px; font-weight: 700; }
+  .crown { font-size: 14px; margin-right: 2px; }
+  .cal-fav-name { font-size: 9px; color: #e090a8; margin-left: 2px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 42px; display: inline-block; vertical-align: middle; flex-shrink: 1; min-width: 0; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #fde8f0; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb { background: #f090b8; border-radius: 4px; }
+</style>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA0_7UYMpV75B_g_fYMhHUT3dzkHJJE7Aw",
+  authDomain: "gal-meal.firebaseapp.com",
+  databaseURL: "https://gal-meal-default-rtdb.firebaseio.com",
+  projectId: "gal-meal",
+  storageBucket: "gal-meal.firebasestorage.app",
+  messagingSenderId: "216714541281",
+  appId: "1:216714541281:web:75ec6a19242176c191dfa0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window._fbDb = db;
+window._fbRef = ref;
+window._fbPush = push;
+window._fbOnValue = onValue;
+window._fbRunTransaction = runTransaction;
+window._fbCurrentUnsub = null;
+
+// Firebase 준비 완료 후 달력 초기화
+window._firebaseReady = true;
+if (window._pendingInit) window._pendingInit();
+</script>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1> 풍산고등학교 급식표 ヾ(≧▽≦*) </h1>
+    <p>🎀 2026년 6월 · 친구들과 메뉴 별점과 한줄평을 공유해요 ᓚᘏᗢ 🎀</p>
+  </header>
+
+  <div class="cal-grid" id="calGrid">
+    <div class="dow sun">일</div>
+    <div class="dow">월</div>
+    <div class="dow">화</div>
+    <div class="dow">수</div>
+    <div class="dow">목</div>
+    <div class="dow">금</div>
+    <div class="dow sat">토</div>
+  </div>
+
+  <div class="main-content" id="mainContent" style="display:none;">
+    <div class="detail" id="detail"></div>
+    
+    <div class="comments-box">
+      <div class="comments-title">💬 실시간 한줄평</div>
+      <div class="comment-list" id="commentList">
+        <div class="no-comments">불러오는 중...</div>
+      </div>
+      <div class="comment-input-wrap">
+        <input type="text" class="comment-input" id="commentInput" placeholder="이 급식 어때요? 댓글을 남겨보세요!" onkeydown="if(event.key==='Enter')jsAddComment()">
+        <button class="comment-btn" onclick="jsAddComment()">등록</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="timer-box" id="timerBox">
+    <div class="timer-meal-info">
+      <div class="timer-label" id="timerLabel">⏳ 다음 급식까지</div>
+      <div class="timer-meal-name" id="timerMealName">—</div>
+      <div class="timer-menu-preview" id="timerMenuPreview"></div>
+    </div>
+    <div class="timer-count" id="timerCount">
+      <div class="timer-unit"><div class="timer-num" id="timerH">--</div><div class="timer-unit-label">시간</div></div>
+      <div class="timer-sep">:</div>
+      <div class="timer-unit"><div class="timer-num" id="timerM">--</div><div class="timer-unit-label">분</div></div>
+      <div class="timer-sep">:</div>
+      <div class="timer-unit"><div class="timer-num" id="timerS">--</div><div class="timer-unit-label">초</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const meals = {
+  "조식": {
+    1:{items:["백미밥","두물머리연잎핫도그(1.2.5.6.12.13.18)","시락된장국(5.6)","감자양송이조림(5.6.13)","돼지고기장조림(5.6.10.13)","계란찜(1.2)","시금치무침(5.6)","배추김치(9)"],kcal:906.7},
+    2:{items:["쇠고기양송이죽(16)","감자샌드위치(1.2.5.6.10.15.16)","스크램블드에그(1.5.10)","토네이도소시지(1.2.5.6.10.12.15.16)","오이피클","사과주스(13)","토마토(친환경)(12)","그린샐러드(1.5)"],kcal:831.7},
+    3:{items:["백미밥","손만두국(1.5.6.10.16.18)","브로콜리계란찜(1.2.9.13)","오징어실채볶음(5.6.13.17)","떡갈비구이(5.6.10.12.15.16.18)","도시락김","배추김치(9)","황금카스텔라(1.2.5.6)"],kcal:923.0},
+    4:{items:["백미밥","북어무국(1.5.6)","알본디가스(1.2.5.6.10.12.13.15.16)","감자어묵조림(1.5.6.13)","콩나물무침(5)","깻잎순멸치조림(5.6)","배추김치(9)","듀얼잼파이(1.2.5)"],kcal:877.1},
+    5:{items:["백미밥","조갯살콩나물국(5.6.18)","쇠고기메추리알조림(1.5.6.13.16)","연두부&양념장(5.6)","숙주미나리무침","다시마튀각(5.13)","배추김치(9)","꽃빵튀김(콩가루)(2.5.6.13)"],kcal:856.2},
+    6:{items:["백미밥","오징어탕국(5.6.17)","가자미무조림(5.6.13)","(깐)계란장조림(마)(1.5.6.13)","단배추깨소금나물(5.6.13)","햄전(1.2.5.6.10.12.15.16)","배추김치(9)","초코칩트위스트(생)(1.2.5.6)"],kcal:923.2},
+    7:{items:["계란야채죽(1)","삼색비엔나구이(2.5.6.10.12.15.16)","오이피클","미니불고기버거(선)(1.2.5.6.10.12.13.16)","레드자몽에이드","감자샐러드(1.4.5.6.13)","바나나"],kcal:898.8},
+    8:{items:["백미밥","해물순두부찌개(1.5.6.9.10.13.17.18)","잔멸치호박씨조림(5.6.13)","단배추깨소금나물(5.6.13)","순살햄전(1.2.5.6.10.15.16)","도시락김","배추김치(9)","십원빵(1.5.6)"],kcal:908.5},
+    9:{items:["프렌치토스트&베이컨구이(1.2.5.6.10.13)","감자튀김&케첩(5.6.12)","치킨너겟(1.2.5.6.15)","오이피클(아삭)","우유(2)","콘푸로스트(2.5.6)","양상추치커리샐러드&키위드레싱(1.2.5.6.12)"],kcal:911.2},
+    10:{items:["백미밥","삼색어묵맑은국(1.5.6)","삼치무조림(5.6.13)","도라지오이무침(5.6.13)","애느타리깨소스무침(13)","스팸구이&케첩(1.2.5.6.10.12.13.15.16)","배추김치(9)","미니딸기잼파이(생)(1.2.5.6)"],kcal:876.8},
+    11:{items:["백미밥","감자호박국","단배추무생채(5.6.13)","김가루쪽파무침(5.6)","미나리돼지불고기(5.6.10.13)","동태전(사)(1.5.6)","배추김치(9)","살구파이(생)(1.2.5.6)"],kcal:849.1},
+    12:{items:["백미밥","곰탕(5.6.9.10)","오징어초무침(5.6.13.17)","취나물무침(5.6)","다시마튀각(5.13)","꼬마돈까스&케첩(1.5.6.10.12)","배추김치(9)","우리밀초코파이(1.2.5.6)"],kcal:871.2},
+    13:{items:["백미밥","참치감자찌개(5.6.16.18)","새송이고추장구이(5.6.13)","콩나물무침(5)","쥐포구이채조림(5.6)","너비아니계란전(1.2.5.6.10.12.15.16.18)","배추김치(9)","골드키위젤리(13)"],kcal:926.9},
+    14:{items:["흑임자죽","단호박곡물샌드위치(1.2.5.6.10.15.16)","비엔나소시지구이(응)(1.2.5.6.10.15.16)","오이피클","감귤주스(오)(2.13)","꽃송이치킨너겟채소샐러드(1.2.5.6.12.15)"],kcal:931.2},
+    15:{items:["백미밥","쇠고기탕국(5.6.16)","콩나물냉채(5.13)","건파래볶음","궁중너비아니구이(1.2.5.6.12.15.16)","임연수어구이(5.6)","배추김치(9)","수박에이드(13)"],kcal:920.5},
+    16:{items:["전복죽(18)","경성버거(1.2.5.6.10.12.15.16)","웨지감자비엔나구이(2.5.6.10.12.15.16)","허브소시지&소스(1.2.5.6.10.12.15.16)","오이피클(아삭)","복숭아퐁당컵과일","냉파스타샐러드(1.5.6.12.13)"],kcal:911.1},
+    17:{items:["백미밥","오징어탕국(5.6.17)","모듬유채무침(5.6.13)","떡매갈비지짐(1.2.5.6.10.12.15.16)","들기름돌김구이","배추김치(9)","마들렌(1.2.5.6)","꽃맛살메추리알샐러드(1.2.4.5.6.8.12.13.18)"],kcal:853.1},
+    18:{items:["흑미밥","건새우아욱국(5.6.9)","갈치무조림(5.6.13)","청경채된장무침(5.6)","베이컨감자채볶음(5.6.10)","옛날소시지전(1.2.5.6.10.15.16)","배추김치(9)","딸기앙슈(1.2.5.6)"],kcal:863.8},
+    19:{items:["백미밥","순두부찌개(1.5.6.9.10.13.17.18)","캔꽁치김치조림(5.6.9.13)","비름나물된장무침(5.6)","청포묵김가루무침(5.6.13)","완자전(1.2.5.6.10.12.15.16)","무말랭이김치","토마토주스(12)"],kcal:859.0},
+    20:{items:["백미밥","쇠고기버섯국(5.6.16)","게맛살어묵조림(1.5.6.13)","쑥갓두부무침(4.5.6)","순후추치킨스테이크(1.2.5.6.15.18)","배추김치(9)","사과아몬드샐러드(1.5)","짜먹는곤약젤리(사과맛)"],kcal:872.2},
+    21:{items:["쇠고기장국죽(5.6.16)","고구마슈빅데니쉬(생)(1.2.5.6)","크리스피핫도그(1.2.5.6.10.12.16)","스크램블드에그(1.5.10)","바나나우유(소)(2)","그린샐러드(1.5)","방울토마토(12)"],kcal:896.0},
+    22:{items:["백미밥","들깨순두부탕(5)","쇠고기장조림(1.5.6.13.16)","비름나물무침(5.6)","멸치고추장조림(큰)(5.6.13)","파래돌김자반(5)","배추김치(9)","레몬마들렌(1.2.5.6)"],kcal:848.5},
+    23:{items:["잣죽(19)","반미샌드위치(반)(1.2.5.6.15)","비엔나소시지&케첩(2.5.6.10.12.15.16)","훈제계란(1)","오이피클(아삭)","오렌지주스(100)(13)","사과호두샐러드(1.2.5.14)"],kcal:906.5},
+    24:{items:["백미밥","쇠고기콩나물국(5.6.16)","연근조림(5.6.13)","햄감자채볶음(1.2.5.6.10.13.15.16)","간장돼지불고기(5.6.10.13)","배추김치(9)","요구르트(요구얌)(2)","마카로니샐러드(1.2.4.5.6.13)"],kcal:921.4},
+    25:{items:["백미밥","참치김치찌개(5.9.16.18)","삼치구이(1.4.5.6.13)","우엉고추장볶음(5.6.13)","콩나물볶음(5)","도시락김","배추김치(9)","바나나치크케이크(1.2.5.6)","찹쌀꽈배기도너츠(1.2.5.6.13)"],kcal:917.2},
+    26:{items:["백미밥","쇠고기배추국(5.6.16)","목이버섯오이냉채(5.6.13.18)","동전쥐포조림(5)","간장계란함박스테이크(1.2.5.6.10.12.15.16)","배추김치(9)","멕시칸샐러드(1.2.4.5.6.10.15.16)","요구르트(한)(2)"],kcal:886.4},
+    27:{items:["백미밥","김치손만두국(1.5.6.10.16.18)","가자미구이&칠리소스(2.5.6.12.13.16.18)","브로콜리계란찜(1.2.9.13)","버터오징어채무침(17)","배추김치(9)","방울토마토(12)"],kcal:858.6},
+    28:{items:["대게살채소죽(1.8)","핫도그샌드위치(1.2.5.6.10.12.15.18)","감자튀김(벌집모양)(5.6.12)","오이피클","캐플주스(13)","계란그린샐러드(1.5)","사과(친환경)"],kcal:912.6},
+    29:{items:["백미밥","북어무국(1.5.6)","참치두부조림(5.6.13.16.18)","꽈리고추메알조림(1.5.6.13)","콩나물오색무침(5.13)","가슴살치킨텐더(1.2.5.6.15.18)","배추김치(9)","살구잼팬케이크(1.2.5.6)"],kcal:931.5},
+    30:{items:["단호박죽(부)(6.13)","불고기치즈브레드(1.5.6)","알감자버터구이(2.5.6.13)","토네이도소시지(1.2.5.6.10.12.15.16)","꽃맛살과일요거트샐러드(1.2.4.5.6.8.12.18)","바나나","자두에이드"],kcal:903.3}
+  },
+  "중식": {
+    1:{items:["기장밥","전복미역국(5.6.18)","상추파채무침(5.6.13)","비빔쫄만두(1.5.6.10.13.16.18)","돼지불고기(숯불맛)(5.6.10.13)","브로콜리감자전(5.6)","배추김치(9)","초코레드벨벳케이크(우리쌀)(1.2.5.6)","계절과일샐러드(1.2.5.6.12.14)"],kcal:924.7},
+    2:{items:["차수수밥","짬뽕국(5.6.8.9.13.16.17.18)","두부양념조림(5.6.13)","해파리냉채(13)","마늘통닭(1.5.6.13.15)","배추김치(9)","멕시칸샐러드(1.2.4.5.6.10.15.16)","참외(친환경)"],kcal:810.5},
+    3:{items:["현미밥","순두부찌개(1.5.6.9.10.13.17.18)","스팸감자조림(1.2.5.6.10.13.15.16)","카프레제샐러드(2.4.12.13)","오이부추생채(5.6.13)","순대오리불고기(2.5.6.10.13.16)","팽이버섯튀김&칠리소스(5.6.12.13)","배추김치(9)","에그타르트(1.2.5.6)"],kcal:929.9},
+    4:{items:["쇠고기채소볶음밥(1.2.5.6.10.13.15.16)","계란부추국(1.5.6.9)","모닝빵빠네(1.2.5.6.10.13.16)","수제돈까스2(1.2.5.6.10.12.13.16)","배추김치(9)","단무지","망고샐러드(1.2.5)","멜론(친환경)"],kcal:904.8},
+    5:{items:["혼합잡곡밥(5)","꽃게된장찌개(5.6.8)","꽈리고추찜(5.6)","골뱅이우동무침(5.6.13)","채소파채무침(5.6.13)","대패삼겹살돼지불고기(5.6.10.13)","가지탕수(2.5.6.13)","배추김치(9)","수박"],kcal:924.5},
+    6:{items:["백미밥","버섯매운수제비국(5.6)","비엔나땅콩볶음(2.4.5.6.10.13.15.16)","안동찜닭(납)(5.6.13.15.18)","콩나물냉채(5.13)","메밀김치전병(2.3.5.6.16.18)","무말랭이김치","바나나"],kcal:830.9},
+    7:{items:["백미밥","돼지등뼈김치찌개(9.10)","새송이간장조림(5.6.13)","회오리감자(5.6)","파인애플함박스테이크(1.2.5.6.10.12.13.15.16.18)","깍두기(9)","오이소박이(9)","열대과일샐러드&드레싱"],kcal:818.8},
+    8:{items:["흑미밥","닭개장(6.15)","잔멸치깻잎찜(5.6.13)","콩나물무침(5)","비빔메밀국수(부)(3.5.6.13)","돼지불고기(5.6.10.13)","배추김치(9)","청포도","양배추찜&쌈장(5.6.13)"],kcal:929.7},
+    9:{items:["홍합잡곡밥(5)","청국장찌개(5.9.16)","돈수육1(5.6.10)","마늘종콩가루찜(5.6.13)","매운떡볶이(가)(1.5.6.13)","고추잡채김말이튀김(1.5.6.10.16)","배추김치(9)","우베라떼(2.13)","계절과일샐러드(1.2.5.6.12.14)","깻잎상추쌈(5.6)"],kcal:878.2},
+    10:{items:["백미밥(부)","베트남쌀국수(5.6.9.13.15.16.18)","꼬들단무지","하트새우꼬치(5.6.9.12.13)","야채춘권(1.5.6.10.12)","배추김치(9)","천도복숭아(신비)(11)","냉파스타샐러드(1.5.6.12.13)"],kcal:845.6},
+    11:{items:["발아현미밥","감자짜글이찌개(5.6.10.13.18)","우엉떡조림(5.6.13)","콩나물초무침(5.6.13)","깻잎달걀말이(1.5)","오리훈제구이(1.2.5.6.13)","배추김치(9)","레몬무쌈","수박"],kcal:927.8},
+    12:{items:["눈꽃치즈김치볶음밥(1.2.5.6.9.10.13.15.16)","유부보쌈어묵국(1.5.6.10.13.16)","흑임자소스연근무침(1.5.6.13)","토마토황도절임(11.12)","자장우동볶음(부)(5.6.10.13.16)","양념치킨(4.5.6.12.13.15)","깍두기(9)","오이소박이(9)"],kcal:887.7},
+    13:{items:["백미밥","알탕(5.6.16)","골뱅이진미무침(5.6.13.17)","오이배무침(5.6.13)","조랭이떡볶음(1.5.6.13)","대패삼겹살콩나물볶음(5.6.10.13)","배추김치(9)","크림슨포도"],kcal:883.8},
+    14:{items:["눈꽃치즈돼지목살필라프(2.5.6.10.12.13.18)","김치우동국(1.2.5.6.9.13)","허브소시지&소스(1.2.5.6.10.12.15.16)","배추김치(9)","단무지","양상추샐러드(1.5.12)","방울토마토(12)"],kcal:875.8},
+    15:{items:["발아현미밥","짬뽕국(5.6.8.9.13.16.17.18)","상추부추겉절이(5.6.13)","소불고기(5.6.13.16)","콘치즈버터구이(1.2.5.6.10.13.15.16)","풋고추.가지전(5.6)","배추김치(9)","천도복숭아(신비)(11)"],kcal:891.9},
+    16:{items:["강황쌀밥","청포묵오이냉국(5.6.13.16)","두부계란구이(1.5)","멸치야채무침(5.6.13)","낙지닭갈비(2.5.6.12.13.15.16.18)","배추김치(9)","감귤(친환경)","무쌈오절판(표)(1)"],kcal:894.8},
+    17:{items:["백미밥(부)","미트스파게티(1.2.5.6.10.12.13.15.16)","마늘빵(2.5.6)","채소스프(2.5.6.13.16)","고구마프라이(1.2.5.6)","수제파인애플함박스테이크(1.2.5.6.10.12.13.16)","배추김치(9)","오이피클(아삭)","리코타치즈샐러드(1.2.5.12.13)","요구르트(한)(2)"],kcal:923.7},
+    18:{items:["자장밥(5.6.10.13.16)","꽈리고추찜(5.6)","비빔우동(5.6.13)","오이쑥갓무침(5.6.13)","누룽지탕수육(5.6.10.11.12.13)","배추김치(9)","수박화채(2.11.13.19)","토마토치즈발사믹샐러드(2.12.13)"],kcal:837.9},
+    19:{items:["감자잡채밥(5.16)","팽이버섯맑은된장국(5.6)","오이부추생채(5.6.13)","닭다리자메이카소스구이(장)(5.6.13.15.16)","배추김치(9)","수리취떡(단오)","콥요구르트샐러드(1.2.5.6.12.13)","수박"],kcal:917.1},
+    20:{items:["백미밥","사골우거지국(5.6.16)","(깐)계란장조림(1.5.6.13)","목이버섯오이냉채(5.6.13.18)","불낙새볶음(5.6.9.10.13)","배추김치(9)","양배추샐러드(메)(1.5.6.12)","참외(친환경)"],kcal:924.9},
+    21:{items:["백미밥","참치탕(5.6.16.18)","치커리무생채(13)","돼지고기두루치기(5.6.10.13)","김계란말이(1.2.5)","만두그라탕(1.2.5.6.10.12.13.16.18)","배추김치(9)","토마토(친환경)(12)"],kcal:922.0},
+    22:{items:["기장밥","나가사끼짬뽕국(6.9.13.17.18)","돼지갈비김치찜(9.10)","참나물무침(5.6)","볼어묵고추장볶음(1.5.6.13)","건새우부추전(5.6.9)","애호박전(1.5.6)","갓김치(9)","감귤(친환경)"],kcal:914.5},
+    23:{items:["옥수수쌀밥","감자애호박된장국(오)(5)","청경채오이생채(5.6.13)","애느타리마요들깨무침(1.5.6.13)","누들떡볶이(1.5.6.13)","닭목살양념구이(5.6.13.15)","배추김치(9)","수박"],kcal:871.9},
+    24:{items:["참치비빔밥(5.6.16.18)","들깨무채국","어떡어떡(1.5.6.12.13)","클로렐라생선까스(1.5.6.13)","배추김치(9)","치즈핫도그(1.2.5.6.10.12.15.18)","풋고추된장무침(5.6)","방울토마토(친환경)(12)"],kcal:928.7},
+    25:{items:["가바쌀밥","미역오이냉국(5.6.13.16)","마늘종멸치조림(5.6.13)","어수리나물무침(5.6)","치즈불닭(2.5.6.13.15)","새우감바스&마늘빵(2.5.6.9.12.13)","배추김치(9)","천도복숭아(신비)(11)"],kcal:912.2},
+    26:{items:["흑미밥","꽃게된장찌개(5.6.8)","쫄면야채무침(5.6.13)","상추부추겉절이(5.6.13)","마늘종콩가루찜(5.6.13)","돼지고기구이(10.13)","타꼬야끼(1.2.5.6.13.15.16.18)","백김치(9)","멜론(친환경)","채소스틱&쌈장(5.6)"],kcal:930.5},
+    27:{items:["백미밥","마라탕(1.2.4.5.6.10.12.13.15.16.18)","건문어초무침(5.6.13)","오이양파무침(5.6.13)","꿔바로우(1.5.6.10.11.12.13)","배추김치(9)","단무지","우유미숫가루(2.5.13)"],kcal:862.3},
+    28:{items:["백미밥","조랭이떡어묵국(1.5.6)","안동찜닭(5.6.13.15.18)","오이고추된장무침(5.6)","골뱅이야채무침(5.6.13)","깻잎고기완자전(1.2.5.6.10.12.16)","모짜렐라치즈볼(1.2.5.6.13)","배추김치(9)"],kcal:931.0},
+    29:{items:["혼합잡곡밥(5)","새알심미역국(5.6.16)","가지나물무침","돼지불고기(5.6.10.13)","메추리알떡볶이(가)(1.5.6.13)","옥수수채소튀김(5.6.13)","배추김치(9)","망고아이스티(11.13)","야채숙쌈(양배추,케일)"],kcal:914.1},
+    30:{items:["곤드레무영양밥(16)","감자애호박된장국(오)(5)","두부계란구이(1.5)","명태피조림(5.6.13)","열무무생채(5.6.13)","블랙알리오치킨(1.5.6.13.15)","배추김치(9)","거봉"],kcal:864.4}
+  },
+  "석식": {
+    1:{items:["백미밥","잔멸치아몬드조림(5.6.13)","감자채카레볶음(2.5.6.12.13.16.18)","대만식지파이(1.5.6.15.18)","부추양파겉절이(13)","짜먹는요구르트(2)","스팸김치찌개(1.2.5.6.9.10.13.15.16)"],kcal:866.6},
+    2:{items:["백미밥(부)","돈코츠라멘(1.2.5.6.10.13.15.16)","꼬들단무지","애느타리양파간장지(5.6.13)","통모짜치즈카츠(1.5.6.10.12.13.18)","배추김치(9)","리코타치즈샐러드(1.2.5.12.13)","청포도"],kcal:878.2},
+    3:{items:["김밥볶음밥(1.2.5.6.10.15.16)","꼬치어묵국(1.5.6)","브로콜리숙회(5.6.13)","삼색냉채(1.2.5.6.10.13.15.16)","간장돼지고기강정(1.5.6.10.12.13)","마라교자만두구이(1.5.6.9.10.15.16.17.18)","배추김치(9)","딸기쉐이크(2)"],kcal:886.6},
+    4:{items:["눈꽃치즈닭갈비덮밥(2.5.6.12.13.15.16.18)","유부미소장국(5.6)","열무무생채(5.6.13)","뱅글뱅글소시지(2.5.6.10.15.16)","배추김치(9)","따바오만두(1.2.5.6.10.16)","아이스망고스틱(2)"],kcal:931.0},
+    5:{items:["백미밥","버섯샤브샤브국(5.6.16)","메추리알햄조림(1.2.5.6.10.13.15.16)","도토리묵상추무침(5.6.13)","새우젓애호박볶음(5.9)","유린기(1.5.6.13.15)","배추김치(9)","미니크림치즈파이(1.2.5.6)"],kcal:923.7},
+    6:{items:["쇠고기야채주먹밥(16)","팟타이(볶음쌀국수)(주)(1.2.4.5.6.9.10.12.13.15.16.18)","가쓰오우동장국(1.2.5.6.9.13)","멘츠카츠(1.5.6.10)","웨지감자비엔나구이(2.5.6.10.12.15.16)","깍두기(9)","요구르트(엔요)(2)","콘샐러드(1.4.5.13)","방울토마토(12)"],kcal:922.1},
+    7:{items:["백미밥","감자고추장찌개(5.6.16)","탕평채(1.5.6.13.16)","뉴진면로제찜닭(2.5.6.10.12.13.15.16)","돌나물오이생채(5.6.13)","만두탕수(1.5.6.10.11.13.16.18)","배추김치(9)","초코칩쿠키(생)(1.2.5.6)"],kcal:881.6},
+    8:{items:["백미밥","게살누룽지탕(1.5.6.8.13.18)","시금치무침(5.6)","마파두부(5.6.10.12.13.18)","우엉잡채(채)(5.6.13.16)","감자말이새우튀김(1.5.6.9.12)","배추김치(9)","자두슬러시"],kcal:920.5},
+    9:{items:["낙지볶음덮밥(5.6.13)","계란부추국(1.5.6.9)","크래미숙주무침","오이고추된장무침(5.6)","깍두기(9)","스테이크피자(선)(1.2.5.6.10.12.13.15.16)","요구르트(65)(2)","양배추샐러드(1.5.12)"],kcal:921.6},
+    10:{items:["백미밥","삼색수제비국(5.6)","숯불맛치킨구이(5.6.10.13.15)","멸치야채무침(5.6.13)","브로콜리숙회(5.6.13)","베이컨감자채볶음(5.6.10)","배추김치(9)","청사과에이드"],kcal:870.1},
+    11:{items:["양배추계란볶음밥(1.5.6.13.18)","팽이버섯미소장국(5.6)","열무된장무침(5.6)","떡잡채(5.6.13.16)","황금알카츠&케첩(1.5.6.10.12)","피자군만두(1.2.5.6.10.12.16.18)","배추김치(9)","패션후르츠에이드(수)(13)"],kcal:916.6},
+    12:{items:["백미밥","쇠고기근대장국(5.6.16)","등갈비떡찜(5.6.10.13)","오징어쫄면무침(5.6.13.17)","깻잎순멸치조림(5.6)","맛살계란말이(1.2.5)","배추김치(9)","골드파인애플(조각)"],kcal:882.8},
+    13:{items:["백미밥","푸실리크림스파게티(부)(1.2.5.6.10.13.16)","동태찌개(5.6)","도라지사과생채(5.6.13)","단호박닭조림(5.6.15)","배추김치(9)","식혜","꽃맛살과일요거트샐러드(1.2.4.5.6.8.12.18)"],kcal:911.8},
+    14:{items:["백미밥","감자옹심이수제비(17)","잔멸치아몬드조림(5.6.13)","닭봉마늘데리야끼조림(5.6.12.13.15.18)","양배추깻잎생채(13)","김말이만두강정(1.5.6.10.12.13.16.18)","배추김치(9)","사과매실주스(13)"],kcal:841.9},
+    15:{items:["백미밥","새알떡만두국(1.5.6.10.15.16.18)","해물콩나물찜(5.6.8.9.13.17.18)","도라지오이생채(5.6.13)","감자멸치볶음(5.6.13)","야채튀김(5.6)","배추김치(9)","컵젤리(오)"],kcal:906.7},
+    16:{items:["삼색소보로덮밥(1.5.6.9.13.16)","북어고추장찌개(5.6.16)","치커리사과생채(5.6.13)","오코노미야끼(수)(1.2.5.6.9.10.13.15.16.17)","오징어튀김(찹)(1.5.6.17)","깍두기(9)","유산균요구르트(2)","풋고추양념무침(5.6)"],kcal:929.1},
+    17:{items:["백미밥","해물탕(5.6.8.17)","닭오븐구이(5.6.13.15)","딤섬고기창펀(1.5.6.10.16.18)","도토리묵상추무침(5.6.13)","계란떡볶이(1.5.6.13)","배추김치(9)","플레인요거트(씨리얼)(2.5.6)"],kcal:923.7},
+    18:{items:["백미밥","알탕(5.6.16)","연근땅콩조림(4.5.6.13)","콩나물볶음(5)","카레닭갈비(2.5.6.12.13.15.16.18)","오징어튀김(찹)(1.5.6.17)","배추김치(9)","블루베리잼치즈크로플(1.2.5.6.13)"],kcal:848.7},
+    19:{items:["김밥볶음밥(1.2.5.6.10.15.16)","얼갈이버섯된장국(5.6)","두부무조림(5.6.13)","중화식청경채찜(5.6.13.18)","가지나물무침","통새우꼬치(1.2.5.6.9.12.18)","무말랭이김치","아이스슈(초코맛)(1.2.5.6)"],kcal:885.8},
+    20:{items:["백미밥(부)","냉쫄면(1.5.6.13.16)","오이양파무침(5.6.13)","칠리소스돈육강정(1.5.6.10.12.13)","피자군만두(1.2.5.6.10.12.16.18)","깍두기(9)","요구르트(엔요)(2)","감자샐러드(1.4.5.6.13)"],kcal:922.1},
+    21:{items:["백미밥","조랭이떡만두국(1.5.6.10.16.18)","견과류조림(4.5.6.14)","카프레제샐러드(2.4.12.13)","이색나물무침(얼,콩)(5)","뿌링클치킨(1.2.5.6.13.15)","배추김치(9)","트로피칼에이드(12.13)"],kcal:875.9},
+    22:{items:["백미밥","도토리묵냉국(5.6.9.13.16)","두부튀김조림(5.6.13)","새송이고추장구이(5.6.13)","훈제오리채소찜(1.2.5.6)","모듬유채무침(5.6.13)","무말랭이김치","거봉"],kcal:890.2},
+    23:{items:["백미밥(부)","메밀소바(1.3.5.6.9.13)","참외블루베리샐러드(13)","왕새우튀김(1.5.6.9)","갈떡갈떡꼬치(5.6.10.12.13.15.16)","오이무피클","배추김치(9)","요구르트(뽀)(2)"],kcal:867.2},
+    24:{items:["백미밥","돼지등뼈감자탕(5.6.9.10)","돌나물무침(5.6.13)","비빔메밀국수(부)(3.5.6.13)","마파두부(5.6.10.12.13.18)","비엔나떡강정(부)(2.5.6.10.12.13.15.16)","배추김치(9)","키위요거트스무디(2.13)"],kcal:923.0},
+    25:{items:["오므라이스(소시지)(1.2.5.6.10.12.13.15.16.18)","얼갈이버섯된장국(5.6)","오이양파무침(5.6.13)","데리야끼멘츠카츠&크림소스(1.2.5.6.10)","배추김치(9)","플레인요거트(블루베리)(2)"],kcal:931.5},
+    26:{items:["비밥찜닭덮밥(5.6.13.15)","콩나물맑은국(5.6)","잔멸치고추장조림(5.6.13)","식물성왕교자만두찜(1.5.6)","브로콜리깨소스무침(1.5.13)","야채소스(5.6.13)","배추김치(9)","오색구슬떡"],kcal:899.1},
+    27:{items:["백미밥","닭곰탕(15)","넓은어묵조림(1.5.6.13)","콩나물미나리무침(두)(5)","크런치스파이시생선까스(1.2.5.6.12.13)","배추김치(9)","토마토치즈발사믹샐러드(2.12.13)","수박"],kcal:871.7},
+    28:{items:["중화제육덮밥&계란구이(1.5.6.10.13.18)","두부된장국(5.6)","소떡소떡(씨)(1.2.5.6.10.12.13.15.16)","배추김치(9)","따바오만두(1.2.5.6.10.16)","요구르트(엔요)(2)","과일샐러드(여름)(1.4.5.11.12)"],kcal:902.8},
+    29:{items:["백미밥","육개장(5.6.16)","닭날개양념조림(5.6.12.13.15)","참나물무침(5.6)","새송이맛살전(1.5.6)","언양식바싹불고기(1.2.5.6.10.15.16.18)","배추김치(9)","미니프레즐(2.5.6)"],kcal:885.8},
+    30:{items:["백미밥","돼지등뼈김치찌개(9.10)","햄전(1.2.5.6.10.12.15.16)","코다리강정(5.6.13)","불닭팽이버섯구이(2.5.6.13)","배추김치(9)","쫀득쿠키(1.2.5.6)","열대과일샐러드(1.2.5.6)"],kcal:923.2}
+  }
+};
+
+const favorites = JSON.parse(localStorage.getItem('pungsan_meal_favs')) || {};
+
+const adjs = ["맛있는", "배고픈", "배부른", "행복한", "든든한", "신선한", "매콤한", "(rare)야르한"];
+const nouns = ["사과", "치킨", "감자", "까스", "수박", "찌개", "튀김", "도넛", "마라탕", "핫치즈빅싸이순살", "로제마라샹궈"];
+let myNick = localStorage.getItem('pungsan_my_nick');
+if (!myNick) {
+  myNick = adjs[Math.floor(Math.random()*adjs.length)] + " " + nouns[Math.floor(Math.random()*nouns.length)];
+  localStorage.setItem('pungsan_my_nick', myNick);
+}
+
+let currentRoom = null;
+let roomStorage = null;
+let globalStars = {}; // Firebase에서 받아온 전체 별점 {key: count}
+
+function cleanName(s) { return s.replace(/\([\d\.]+\)\s*$/, '').trim(); }
+function getAllergy(s) { const m = s.match(/\(([\d\.]+)\)\s*$/); return m ? m[1] : null; }
+
+const DOW = ['일','월','화','수','목','금','토'];
+const FIRST_DOW = 1; // 2026년 6월 1일 월요일
+const _now = new Date();
+const TODAY = (_now.getFullYear() === 2026 && _now.getMonth() === 5) ? _now.getDate() : null;
+let selectedDay = null;
+let selectedMeal = '중식';
+
+const grid = document.getElementById('calGrid');
+
+// [수정완료] 충돌 오류가 나던 부분을 완전히 비우고 안전하게 새로 작성했습니다.
+for (let i = 0; i < FIRST_DOW; i++) {
+  const e = document.createElement('div');
+  e.className = 'day empty';
+  grid.appendChild(e);
+}
+
+for (let d = 1; d <= 30; d++) {
+  const dow = (FIRST_DOW + d - 1) % 7;
+  const cell = document.createElement('div');
+  cell.className = 'day' + (d === TODAY ? ' today' : '') + (dow === 0 ? ' sun' : dow === 6 ? ' sat' : '');
+  cell.id = `day-cell-${d}`;
+  cell.onclick = () => selectDay(d);
+  grid.appendChild(cell);
+}
+
+function updateCalendarStars() {
+  for (let d = 1; d <= 30; d++) {
+    const cell = document.getElementById(`day-cell-${d}`);
+    if (!cell) continue;
+
+    const mealEmoji = { '조식': '♨', '중식': '´▽`♡', '석식': '♬' };
+    const lines = ['조식','중식','석식'].map(meal => {
+      const stars = getStarCount(d, meal);
+      // 찜한 메뉴 이름 최대 1개 표시
+      let favName = '';
+      if (stars > 0 && meals[meal][d]) {
+        const favItem = meals[meal][d].items.find(item => favorites[`${d}-${meal}-${item}`]);
+        if (favItem) favName = `<span class="cal-fav-name">${cleanName(favItem)}</span>`;
+      }
+      return `<div class="summary-line ${stars > 0 ? 'has-stars' : ''}">${mealEmoji[meal]} ${stars}${favName}</div>`;
+    }).join('');
+
+    cell.innerHTML = `<div class="day-num">${d}</div><div class="day-stars-summary">${lines}</div>`;
+  }
+}
+
+function selectDay(d) {
+  selectedDay = d;
+  document.querySelectorAll('.day').forEach((el) => {
+    if (el.id === `day-cell-${d}`) el.classList.add('selected');
+    else el.classList.remove('selected');
+  });
+  document.getElementById('mainContent').style.display = 'grid';
+  renderDetail();
+  connectCommentRoom();
+}
+
+function getStarCount(day, meal) {
+  let count = 0;
+  if (!meals[meal] || !meals[meal][day]) return 0;
+  meals[meal][day].items.forEach(item => {
+    const key = `${day}-${meal}-${item}`;
+    if (favorites[key]) count++;
+  });
+  return count;
+}
+
+function toggleFavorite(day, meal, item) {
+  const key = `${day}-${meal}-${item}`;
+  const wasOn = !!favorites[key];
+  favorites[key] = !wasOn;
+  localStorage.setItem('pungsan_meal_favs', JSON.stringify(favorites));
+
+  // Firebase에 별점 증감 반영
+  if (window._fbDb && window._fbRunTransaction) {
+    const itemName = cleanName(item);
+    const starPath = `stars/june-${day}-${meal === '조식' ? 'brk' : meal === '중식' ? 'lun' : 'din'}-${itemName}`;
+    const starRef = window._fbRef(window._fbDb, starPath);
+    window._fbRunTransaction(starRef, (current) => Math.max(0, (current || 0) + (wasOn ? -1 : 1)));
+  }
+
+  updateCalendarStars();
+  renderDetail();
+}
+
+function renderDetail() {
+  const d = selectedDay;
+  const dow = DOW[(FIRST_DOW + d - 1) % 7];
+  const data = meals[selectedMeal][d];
+  const tabClasses = { '조식': 'active-b', '중식': 'active-l', '석식': 'active-d' };
+  
+  const tabs = ['조식','중식','석식'].map(m => {
+    const stars = getStarCount(d, m);
+    return `<button class="tab${m===selectedMeal?' '+tabClasses[m]:''}" onclick="switchMeal('${m}')">${m} ${stars>0?`<span class="tab-stars">★${stars}</span>`:''}</button>`;
+  }).join('');
+  
+  let rows = '';
+  if (data) {
+    const mealEng = selectedMeal === '조식' ? 'brk' : selectedMeal === '중식' ? 'lun' : 'din';
+
+    // 전체 별점 합산 계산
+    const starCounts = data.items.map(item => {
+      const itemName = cleanName(item);
+      const fbKey = `june-${d}-${mealEng}-${itemName}`;
+      return globalStars[fbKey] || 0;
+    });
+    const maxStars = Math.max(...starCounts);
+
+    rows = data.items.map((item, idx) => {
+      const isFav = !!favorites[`${d}-${selectedMeal}-${item}`];
+      const count = starCounts[idx];
+      const isCrown = maxStars > 0 && count === maxStars;
+      const starBadge = count > 0 ? `<span class="global-stars">(별 ${count})</span>` : '';
+      const crown = isCrown ? `<span class="crown">👑</span>` : '';
+      return `
+        <div class="menu-row ${isFav ? 'favorite' : ''}" onclick="toggleFavorite(${d}, '${selectedMeal}', '${item}')">
+          <div class="menu-left"><span class="star-icon">★</span><span class="menu-name">${crown}${cleanName(item)}</span>${starBadge}</div>
+          ${getAllergy(item) ? `<span class="allergy">${getAllergy(item)}</span>` : ''}
+        </div>
+      `;
+    }).join('');
+  } else {
+    rows = '<div class="no-meal">해당 식사 정보가 없어요</div>';
+  }
+  document.getElementById('detail').innerHTML = `
+    <div class="detail-header"><span class="detail-date">6월 ${d}일 (${dow})</span>${data ? `<span class="detail-kcal">🔥 ${data.kcal} kcal</span>` : ''}</div>
+    <div class="meal-tabs">${tabs}</div>
+    <div class="menu-list">${rows}</div>
+  `;
+}
+
+function switchMeal(m) {
+  selectedMeal = m;
+  renderDetail();
+  connectCommentRoom();
+}
+
+function connectCommentRoom() {
+  if (window._fbCurrentUnsub) { window._fbCurrentUnsub(); window._fbCurrentUnsub = null; }
+  if (window._fbStarUnsub) { window._fbStarUnsub(); window._fbStarUnsub = null; }
+
+  const mealEng = selectedMeal === '조식' ? 'brk' : selectedMeal === '중식' ? 'lun' : 'din';
+  const roomPath = `comments/june-${selectedDay}-${mealEng}`;
+  const starBasePath = `stars/june-${selectedDay}-${mealEng}`;
+
+  document.getElementById('commentList').innerHTML = '<div class="no-comments">댓글 불러오는 중...</div>';
+
+  // 별점 실시간 구독 - stars 전체를 flat하게 읽기
+  const starRef = window._fbRef(window._fbDb, 'stars');
+  window._fbStarUnsub = window._fbOnValue(starRef, (snapshot) => {
+    const data = snapshot.val() || {};
+    globalStars = data; // { "june-10-lun-베트남쌀국수": 2, ... }
+    renderDetail();
+  });
+
+  const commentsRef = window._fbRef(window._fbDb, roomPath);
+  window._fbCurrentUnsub = window._fbOnValue(commentsRef, (snapshot) => {
+    const data = snapshot.val();
+    if (!data) {
+      document.getElementById('commentList').innerHTML = '<div class="no-comments">아직 등록된 한줄평이 없어요.<br>첫 댓글을 남겨보세요!</div>';
+      return;
+    }
+    const cmtArray = Object.values(data).sort((a, b) => a.ts - b.ts);
+    const listEl = document.getElementById('commentList');
+    listEl.innerHTML = cmtArray.map(c => `
+      <div class="comment-item">
+        <div class="comment-meta"><span>👤 ${escapeHtml(c.nick)}</span><span>${c.time || ''}</span></div>
+        <div>${escapeHtml(c.text)}</div>
+      </div>
+    `).join('');
+    listEl.scrollTop = listEl.scrollHeight;
+  });
+
+  window._currentRoomPath = roomPath;
+}
+
+function renderComments(cmtArray) {
+  const listEl = document.getElementById('commentList');
+  if (!cmtArray || cmtArray.length === 0) {
+    listEl.innerHTML = '<div class="no-comments">아직 등록된 한줄평이 없어요.<br>첫 댓글을 남겨보세요!</div>';
+    return;
+  }
+  listEl.innerHTML = cmtArray.map(c => `
+    <div class="comment-item">
+      <div class="comment-meta"><span>👤 ${c.nick}</span> <span>${c.time || ''}</span></div>
+      <div>${escapeHtml(c.text)}</div>
+    </div>
+  `).join('');
+  listEl.scrollTop = listEl.scrollHeight;
+}
+
+function jsAddComment() {
+  const input = document.getElementById('commentInput');
+  const txt = input.value.trim();
+  if (!txt || !window._fbDb || !window._currentRoomPath) return;
+
+  const now = new Date();
+  const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+
+  window._fbPush(window._fbRef(window._fbDb, window._currentRoomPath), {
+    nick: myNick,
+    text: txt,
+    time: timeStr,
+    ts: now.getTime()
+  });
+  input.value = '';
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+updateCalendarStars();
+// Firebase 모듈 로드 후 실행
+window._pendingInit = () => { if (TODAY) selectDay(TODAY); };
+if (window._firebaseReady) window._pendingInit();
+</script>
+
+<script>
+// 클릭 별가루 ✨
+(function() {
+  const COLORS = ['#f02060','#ff80b0','#ffcc00','#ff60a0','#fff','#f0a0d0','#ffaacc','#ffe0f0'];
+  const SHAPES = ['★','✦','✧','♥','·','✿','❋'];
+
+  document.addEventListener('click', function(e) {
+    const count = 14 + Math.floor(Math.random() * 8);
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement('span');
+      el.textContent = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+      const size = 10 + Math.random() * 16;
+      const angle = Math.random() * 360;
+      const dist  = 40 + Math.random() * 80;
+      const dx = Math.cos(angle * Math.PI / 180) * dist;
+      const dy = Math.sin(angle * Math.PI / 180) * dist;
+      const dur  = 500 + Math.random() * 500;
+      Object.assign(el.style, {
+        position: 'fixed',
+        left: e.clientX + 'px',
+        top:  e.clientY + 'px',
+        fontSize: size + 'px',
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        pointerEvents: 'none',
+        zIndex: 99999,
+        userSelect: 'none',
+        transform: 'translate(-50%,-50%)',
+        transition: `transform ${dur}ms ease-out, opacity ${dur}ms ease-out`,
+        opacity: '1',
+        textShadow: '0 0 4px #fff',
+        fontFamily: 'serif',
+      });
+      document.body.appendChild(el);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0.3) rotate(${angle}deg)`;
+          el.style.opacity = '0';
+        });
+      });
+      setTimeout(() => el.remove(), dur + 50);
+    }
+  });
+})();
+</script>
+
+<script>
+// ⏰ 급식 타이머
+(function() {
+  // 중식 13:00, 석식 18:00
+  const MEALS = [
+    { name: '중식', hour: 13, min: 0, meal: '중식' },
+    { name: '석식', hour: 18, min: 0, meal: '석식' },
+  ];
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function getMenuPreview(mealKey) {
+    const now = new Date();
+    const day = now.getDate();
+    if (now.getFullYear() !== 2026 || now.getMonth() !== 5) return '';
+    const data = meals[mealKey] && meals[mealKey][day];
+    if (!data || !data.items) return '';
+    return data.items.slice(0, 3).map(i => cleanName(i)).join(' · ');
+  }
+
+  function tick() {
+    const now = new Date();
+    const isJune2026 = now.getFullYear() === 2026 && now.getMonth() === 5;
+
+    // 오늘 기준으로 다음 급식 찾기
+    let target = null;
+    let targetMeal = null;
+
+    for (const m of MEALS) {
+      const t = new Date(now);
+      t.setHours(m.hour, m.min, 0, 0);
+      if (t > now) { target = t; targetMeal = m; break; }
+    }
+
+    const labelEl = document.getElementById('timerLabel');
+    const nameEl  = document.getElementById('timerMealName');
+    const previewEl = document.getElementById('timerMenuPreview');
+    const hEl = document.getElementById('timerH');
+    const mEl = document.getElementById('timerM');
+    const sEl = document.getElementById('timerS');
+    const countEl = document.getElementById('timerCount');
+
+    if (!target) {
+      // 오늘 급식 다 지남
+      labelEl.textContent = '🌙 오늘 급식 끝!';
+      nameEl.textContent = '내일 또 만나요 👋';
+      previewEl.textContent = '';
+      hEl.textContent = '--'; mEl.textContent = '--'; sEl.textContent = '--';
+      return;
+    }
+
+    const diff = Math.max(0, Math.floor((target - now) / 1000));
+    const h = Math.floor(diff / 3600);
+    const m = Math.floor((diff % 3600) / 60);
+    const s = diff % 60;
+
+    labelEl.textContent = `⏳ ${targetMeal.name}까지`;
+    nameEl.textContent = `${targetMeal.hour}:${pad(targetMeal.min)} ${targetMeal.name}`;
+    if (isJune2026) previewEl.textContent = getMenuPreview(targetMeal.meal);
+    hEl.textContent = pad(h);
+    mEl.textContent = pad(m);
+    sEl.textContent = pad(s);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>
